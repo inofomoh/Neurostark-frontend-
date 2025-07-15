@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroStark Film Engine</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0e0e0e; color: #fff; text-align: center; padding: 2rem; }
+    input, textarea, button, select { margin: 1rem auto; display: block; padding: 10px; border-radius: 8px; border: none; width: 80%; max-width: 400px; font-size: 1rem; }
+    button { background-color: #00ffc3; color: #000; cursor: pointer; }
+    .output { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>🎬 NeuroStark Film Engine</h1>
+  <p>Enter your story idea, choose a genre, and upload a face photo to star in the film.</p>
+
+  <textarea id="prompt" placeholder="Enter your movie idea..."></textarea>
+  <select id="genre">
+    <option>Action</option>
+    <option>Adventure</option>
+    <option>Animation</option>
+    <option>Biography</option>
+    <option>Comedy</option>
+    <option>Crime</option>
+    <option>Documentary</option>
+    <option>Drama</option>
+    <option>Fantasy</option>
+    <option>Family</option>
+    <option>Historical</option>
+    <option>Horror</option>
+    <option>Musical</option>
+    <option>Mystery</option>
+    <option>Romance</option>
+    <option>Sci-Fi</option>
+    <option>Sport</option>
+    <option>Superhero</option>
+    <option>Thriller</option>
+    <option>War</option>
+    <option>Western</option>
+    <option>Survival</option>
+    <option>Cyberpunk</option>
+    <option>Post-apocalyptic</option>
+    <option>Noir</option>
+    <option>Political</option>
+    <option>Teen</option>
+    <option>Parody</option>
+    <option>Fantasy Adventure</option>
+    <option>Romantic Comedy</option>
+  </select>
+  <input type="file" id="faceUpload" accept="image/*">
+  <button onclick="submitFilmRequest()">🎥 Generate My Film</button>
+
+  <div class="output" id="output"></div>
+
+  <script>
+    async function submitFilmRequest() {
+      const prompt = document.getElementById('prompt').value;
+      const genre = document.getElementById('genre').value;
+      const faceFile = document.getElementById('faceUpload').files[0];
+
+      if (!prompt || !faceFile) {
+        alert("Please enter a movie idea and upload a face photo.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("prompt", `${prompt} -- Genre: ${genre}`);
+      formData.append("face_image", faceFile);
+
+      document.getElementById("output").innerText = "Generating your movie...⏳";
+
+      try {
+        const response = await fetch("https://neurostark-api.onrender.com/generate", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById("output").innerHTML = `✅ Done! <a href="${result.video_url}" target="_blank">Watch Your Film</a>`;
+      } catch (err) {
+        console.error(err);
+        document.getElementById("output").innerText = "Something went wrong. Make sure backend is deployed.";
+      }
+    }
+  </script>
+</body>
+</html>
